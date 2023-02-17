@@ -202,7 +202,7 @@ def train(appliance_name, model, sequence_length, mains, appliance, epochs, batc
             best_loss = final_loss
             patience = 0
             net_state_dict = model.state_dict()
-            path_state_dict = "./"+appliance_name+"_seq2seq_best_state_dict.pt"
+            path_state_dict = "./"+str(appliance_name)+"_seq2seq_best_state_dict.pt"
             torch.save(net_state_dict, path_state_dict)
         else:
             patience = patience + 1
@@ -219,7 +219,7 @@ def train(appliance_name, model, sequence_length, mains, appliance, epochs, batc
             checkpoint = {"model_state_dict": model.state_dict(),
                             "optimizer_state_dict": optimizer.state_dict(),
                             "epoch": epoch}
-            path_checkpoint = "./"+appliance_name+"_seq2seq_checkpoint_{}_epoch.pt".format(epoch)
+            path_checkpoint = "./"+str(appliance_name)+"_seq2seq_checkpoint_{}_epoch.pt".format(epoch)
             torch.save(checkpoint, path_checkpoint)
 
 def test(model, test_mains, batch_size = 512):
@@ -277,12 +277,12 @@ class Seq2Seq(Disaggregator):
                 self.models[appliance_name] = Seq2Seq_Pytorch(encoder, decoder)
                 # Load pretrain dict or not
                 if pretrain is True:
-                    self.models[appliance_name].load_state_dict(torch.load("./"+appliance_name+"_seq2seq_pre_state_dict.pt"))
+                    self.models[appliance_name].load_state_dict(torch.load("./"+str(appliance_name)+"_seq2seq_pre_state_dict.pt"))
   
             model = self.models[appliance_name]
             train(appliance_name,model, self.sequence_length, train_main, power, self.n_epochs, self.batch_size, pretrain = pretrain, checkpoint_interval = 3)
             # Model test will be based on the best model
-            self.models[appliance_name].load_state_dict(torch.load("./"+appliance_name+"_seq2seq_best_state_dict.pt"))
+            self.models[appliance_name].load_state_dict(torch.load("./"+str(appliance_name)+"_seq2seq_best_state_dict.pt"))
 
     def disaggregate_chunk(self, test_main_list, do_preprocessing = True):
         # Disaggregate (test process)

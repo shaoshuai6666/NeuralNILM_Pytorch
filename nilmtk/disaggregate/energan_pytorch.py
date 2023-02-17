@@ -190,7 +190,7 @@ def train(appliance_name, gen_model, dis_model, mains, appliance, epochs, batch_
             best_loss = final_loss
             patience = 0
             gennet_state_dict = gen_model.state_dict()
-            path_state_dict = "./"+appliance_name+"_energan_best_state_dict.pt"
+            path_state_dict = "./"+str(appliance_name)+"_energan_best_state_dict.pt"
             torch.save(gennet_state_dict, path_state_dict)
         else:
             patience = patience + 1 
@@ -207,7 +207,7 @@ def train(appliance_name, gen_model, dis_model, mains, appliance, epochs, batch_
                             "optimizerG_state_dict": optimizer_G.state_dict(),
                             "optimizerD_state_dict": optimizer_D.state_dict(),
                             "epoch": epoch}
-            path_checkpoint = "./"+appliance_name+"_energan_checkpoint_{}_epoch.pt".format(epoch)
+            path_checkpoint = "./"+str(appliance_name)+"_energan_checkpoint_{}_epoch.pt".format(epoch)
             torch.save(checkpoint, path_checkpoint)
 
 def test(model, test_mains, batch_size = 512):
@@ -271,12 +271,12 @@ class EnerGAN(Disaggregator):
                 dis_model = Power_Discriminator(self.sequence_length)
                 # Load pretrain dict or not
                 if pretrain:
-                    self.models[appliance_name].load_state_dict(torch.load("./"+appliance_name+"_genmodel_pre_state_dict.pt"))
-                    dis_model.load_state_dict(torch.load("./"+appliance_name+"_dismodel_pre_state_dict.pt"))
+                    self.models[appliance_name].load_state_dict(torch.load("./"+str(appliance_name)+"_genmodel_pre_state_dict.pt"))
+                    dis_model.load_state_dict(torch.load("./"+str(appliance_name)+"_dismodel_pre_state_dict.pt"))
 
             train(appliance_name,gen_model, dis_model, train_main, power, self.n_epochs, self.batch_size, pretrain, checkpoint_interval = 3)
             # Model test will be based on the best model
-            self.models[appliance_name].load_state_dict(torch.load("./"+appliance_name+"_energan_best_state_dict.pt"))
+            self.models[appliance_name].load_state_dict(torch.load("./"+str(appliance_name)+"_energan_best_state_dict.pt"))
 
     def disaggregate_chunk(self, test_main_list, do_preprocessing = True):
         # Disaggregate (test process)
